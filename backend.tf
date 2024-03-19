@@ -1,9 +1,9 @@
 terraform {
   required_version = ">=0.12.0"
   backend "s3" {
-    region  = "eu-north-1"
+    region  = "<YOUR_REGION>"
     profile = "default"
     key     = "terraformstatefile"
-    bucket  = "yh-terraformstatebucket182"
+    bucket  = "<YOUR_BUCKET_NAME>"
   }
 }
