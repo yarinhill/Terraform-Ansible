@@ -138,7 +138,7 @@ aws configure
 ```
 
 ### 6.
-Install Python on the work
+Install Python3 on the Workstation
 
 ```
 sudo apt-get install python3
@@ -163,7 +163,7 @@ vim instances.tf
 ```
 
 ### 3.
-Edit the tf_aws_ec2.yml with the regions: you choose
+Edit the tf_aws_ec2.yml with the regions of your choice
 
 Line 11
 ```
