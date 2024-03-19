@@ -1,0 +1,83 @@
+---
+- hosts: "{{ passed_in_hosts }}"
+  #become: yes
+  remote_user: "{{ passed_in_remote_user }}"
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    ansible_ssh_private_key_file: "{{ passed_in_private_key }}"
+  
+  tasks:
+    - name: install Git client
+      yum:
+        name: git
+        state: present
+      become: yes
+
+    - name: install Docker
+      yum:
+        name: docker
+        state: present
+      become: yes
+
+    - name: Start and Enable Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: Download Docker Compose binary
+      shell: "curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose"
+      args:
+        creates: /usr/local/bin/docker-compose
+      become: yes
+
+    - name: Make Docker Compose executable
+      file:
+        path: /usr/local/bin/docker-compose
+        mode: '+x'
+      become: yes
+
+    # - name: Create Docker Compose script file
+    #   file:
+    #     path: /etc/profile.d/docker-compose.sh
+    #     state: touch
+    #   become: yes
+
+    # - name: Add Docker Compose to PATH
+    #   lineinfile:
+    #     path: /etc/profile.d/docker-compose.sh
+    #     line: 'export PATH=$PATH:/usr/local/bin'
+    #     create: yes
+    #   become: yes
+
+    # - name: Source the profile to update PATH
+    #   shell: source /etc/profile
+    #   args:
+    #     executable: /bin/bash
+    #   become: yes
+
+    - name: Clone repository
+      git:
+        repo: "https://github.com/yarinhill/CI-CD.git"
+        dest: "/home/{{ ansible_env.USER }}/ci-cd"
+      remote_user: "{{ ansible_env.USER }}"
+  
+    - name: Print current working directory
+      command: pwd
+      register: pwd_output
+
+    - debug:
+        var: pwd_output.stdout
+
+    - name: Change ownership of /var/run/docker.sock
+      become: yes
+      become_user: root
+      command: chown -R {{ ansible_env.USER }}:{{ ansible_env.USER }} /var/run/docker.sock
+
+    - name: Run docker-compose up -d
+      command: docker-compose up -d
+      args:
+        chdir: "/home/{{ ansible_env.USER }}/ci-cd/jenkins"
+      remote_user: "{{ ansible_env.USER }}"
+
