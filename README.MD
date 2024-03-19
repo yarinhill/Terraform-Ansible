@@ -1,4 +1,4 @@
-# Build Jenkins Master and Worker on AWS with Terraform & Ansible
+# Deploy Jenkins Master and Worker on AWS using Terraform & Ansible
 
 ## Installation Process
 
