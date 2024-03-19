@@ -20,7 +20,7 @@ vim backend.tf
 ```
 
 ### 4.
-Create IAM Permissions in AWS for Terraform 
+Create IAM in AWS with the following Permissions
 
 ```
 {
